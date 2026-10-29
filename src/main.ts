@@ -13,8 +13,12 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: process.env.FRONTEND_URL,
-  });
+  origin: [
+    "https://portfolio-client-tiger.vercel.app",
+    "http://localhost:3000",
+  ],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+});
 
   await app.listen(process.env.PORT ?? 5555, '0.0.0.0');
 }
