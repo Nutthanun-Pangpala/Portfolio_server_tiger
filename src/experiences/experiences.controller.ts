@@ -1,6 +1,6 @@
 
 import { Controller, Get } from '@nestjs/common';
-import { ExperiencesService } from './experiences.service';
+import { ExperiencesService } from './experiences.service.js';
 
 @Controller('experiences')
 export class ExperiencesController {

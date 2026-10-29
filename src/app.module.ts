@@ -1,11 +1,11 @@
 
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ExperiencesModule } from './experiences/experiences.module';
-import { PrismaModule } from './prisma/prisma.module';
-import { ProjectsModule } from './projects/projects.module';
+import { AppController } from './app.controller.js';
+import { AppService } from './app.service.js';
+import { ExperiencesModule } from './experiences/experiences.module.js';
+import { PrismaModule } from './prisma/prisma.module.js';
+import { ProjectsModule } from './projects/projects.module.js';
 
 @Module({
   imports: [
