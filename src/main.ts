@@ -1,4 +1,3 @@
-
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
@@ -17,7 +16,7 @@ async function bootstrap() {
     origin: process.env.FRONTEND_URL,
   });
 
-  await app.listen(process.env.PORT ?? 5555);
+  await app.listen(process.env.PORT ?? 5555, '0.0.0.0');
 }
 
 bootstrap();
