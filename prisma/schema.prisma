@@ -1,0 +1,44 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Experience {
+  id          String    @id @default(cuid())
+  company     String
+  position    String
+  employmentType String?
+  description String    @db.Text
+  startDate   DateTime
+  endDate     DateTime?
+  technologies String[] @default([])
+  isPublished Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([isPublished, startDate])
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String   @db.Text
+  imageUrl    String?
+  githubUrl   String?
+  demoUrl     String?
+  technologies String[] @default([])
+  isFeatured  Boolean  @default(false)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  role        String?
+  images      String[] @default([])
+
+  @@index([isPublished, isFeatured])
+}
