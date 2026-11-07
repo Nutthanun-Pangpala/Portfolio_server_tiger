@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import * as bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -167,3 +168,20 @@ main()
     process.exit(1);
   })
   .finally(() => prisma.$disconnect());
+
+const email = process.env.ADMIN_EMAIL;
+const password = process.env.ADMIN_PASSWORD;
+
+if (!email || !password) {
+  throw new Error('Missing ADMIN_EMAIL or ADMIN_PASSWORD');
+}
+
+const passwordHash = await bcrypt.hash(password, 10);
+
+await prisma.adminUser.upsert({
+  where: { email },
+  update: { passwordHash },
+  create: { email, passwordHash },
+});
+
+console.log(`Admin created/updated: ${email}`);

@@ -4,7 +4,6 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { LoginDto } from './dto/login.dto.js';
 
-// ใช้เทียบเวลาเมื่อไม่พบ user ป้องกันการเดาอีเมลจากเวลาตอบสนอง
 const DUMMY_HASH =
   '$2b$10$CwTycUXWue0Thq9StjUM0uJ8.2n0cC1Q1uQ5W4m3k2yq0u0fK1b2e';
 
