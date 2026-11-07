@@ -1,26 +1,25 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  const origins = (process.env.FRONTEND_URL ?? 'http://localhost:3000')
+    .split(',')
+    .map((s) => s.trim().replace(/\/$/, ''));
+
+  app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
+      forbidNonWhitelisted: true,
       transform: true,
     }),
   );
+  app.enableCors({ origin: origins, credentials: true });
 
-  app.enableCors({
-  origin: [
-    "https://portfolio-client-tiger.vercel.app",
-    "http://localhost:3000",
-  ],
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-});
-
-  await app.listen(process.env.PORT ?? 5555, '0.0.0.0');
+  await app.listen(process.env.PORT ?? 5555);
 }
-
 bootstrap();
