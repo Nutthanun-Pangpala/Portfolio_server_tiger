@@ -1,3 +1,4 @@
+
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -14,15 +15,36 @@ export class AuthService {
     private readonly jwt: JwtService,
   ) {}
 
-  async login({ email, password }: LoginDto) {
-    const user = await this.prisma.adminUser.findUnique({ where: { email } });
-    const ok = await bcrypt.compare(password, user?.passwordHash ?? DUMMY_HASH);
+  async login(dto: LoginDto) {
+    const email = dto.email.trim().toLowerCase();
+    const password = dto.password;
 
-    if (!user || !ok) {
-      throw new UnauthorizedException('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
+    const admin = await this.prisma.adminUser.findUnique({
+      where: { email },
+    });
+
+    const passwordValid = await bcrypt.compare(
+      password,
+      admin?.passwordHash ?? DUMMY_HASH,
+    );
+
+    if (!admin || !passwordValid) {
+      throw new UnauthorizedException(
+        'อีเมลหรือรหัสผ่านไม่ถูกต้อง',
+      );
     }
 
-    const token = await this.jwt.signAsync({ sub: user.id, email: user.email });
-    return { token, user: { id: user.id, email: user.email } };
+    const token = await this.jwt.signAsync({
+      sub: admin.id,
+      email: admin.email,
+    });
+
+    return {
+      token,
+      user: {
+        id: admin.id,
+        email: admin.email,
+      },
+    };
   }
 }
