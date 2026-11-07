@@ -6,7 +6,7 @@ import { AppModule } from './app.module.js';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const origins = (process.env.FRONTEND_URL ?? 'http://localhost:3000')
+  const origins = (process.env.FRONTEND_URL ?? 'https://portfolio-client-tiger.vercel.app')
     .split(',')
     .map((s) => s.trim().replace(/\/$/, ''));
 
@@ -18,7 +18,12 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  app.enableCors({ origin: origins, credentials: true });
+  app.enableCors({
+  origin: [
+    process.env.FRONTEND_URL ?? 'https://portfolio-client-tiger.vercel.app',
+  ],
+  credentials: true,
+});
 
   await app.listen(process.env.PORT ?? 5555);
 }
