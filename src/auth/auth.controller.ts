@@ -13,6 +13,7 @@ import type { Request, Response } from 'express';
 import { COOKIE_MAX_AGE_MS, COOKIE_NAME } from './auth.constants.js';
 import { AuthService } from './auth.service.js';
 import { LoginDto } from './dto/login.dto.js';
+import { RegisterDto } from './dto/register.dto.js';
 import { Public } from './public.decorator.js';
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -29,6 +30,22 @@ const cookieOptions = {
 export class AuthController {
   constructor(private readonly auth: AuthService) {}
 
+  // Register Admin
+  @Public()
+  @Post('register')
+  @HttpCode(201)
+  async register(
+    @Body() dto: RegisterDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { token, user } = await this.auth.register(dto);
+
+    res.cookie(COOKIE_NAME, token, cookieOptions);
+
+    return user;
+  }
+
+  // Login Admin
   @Public()
   @Post('login')
   @HttpCode(200)
@@ -43,6 +60,7 @@ export class AuthController {
     return user;
   }
 
+  // Logout Admin
   @Public()
   @Post('logout')
   @HttpCode(200)
@@ -57,10 +75,14 @@ export class AuthController {
     return { ok: true };
   }
 
+  // Get current Admin
   @Get('me')
-  me(@Req() req: Request & {
-    user: { sub: string; email: string };
-  }) {
+  me(
+    @Req()
+    req: Request & {
+      user: { sub: string; email: string };
+    },
+  ) {
     return {
       id: req.user.sub,
       email: req.user.email,
