@@ -93,32 +93,37 @@ export class AuthService {
   }
 
   async login(dto: LoginDto) {
-    const email = dto.email.trim().toLowerCase();
+  const email = dto.email.trim().toLowerCase();
+  const password = dto.password;
 
-    const admin = await this.prisma.adminUser.findUnique({
-      where: { email },
-    });
+  const admin = await this.prisma.adminUser.findUnique({
+    where: { email },
+  });
 
-    const passwordValid = await bcrypt.compare(
-      dto.password,
-      admin?.passwordHash ?? DUMMY_HASH,
-    );
+  const passwordValid = await bcrypt.compare(
+    password,
+    admin?.passwordHash ?? DUMMY_HASH,
+  );
 
-    if (!admin || !passwordValid) {
-      throw new UnauthorizedException('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
-    }
+  // เพิ่มตรงนี้
+  console.log('[LOGIN DEBUG]', {
+    adminFound: Boolean(admin),
+    passwordValid,
+    hashExists: Boolean(admin?.passwordHash),
+  });
 
-    const token = await this.jwt.signAsync({
-      sub: admin.id,
-      email: admin.email,
-    });
-
-    return {
-      token,
-      user: {
-        id: admin.id,
-        email: admin.email,
-      },
-    };
+  if (!admin || !passwordValid) {
+    throw new UnauthorizedException('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
   }
+
+  const token = await this.jwt.signAsync({
+    sub: admin.id,
+    email: admin.email,
+  });
+
+  return {
+    token,
+    user: { id: admin.id, email: admin.email },
+  };
+}
 }
